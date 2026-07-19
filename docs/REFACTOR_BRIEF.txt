@@ -1,0 +1,102 @@
+Act as a Staff React Native & Mobile Systems Engineer
+Refactor the provided codebase (App.js, app.json, RoutinePage.js, CalendarPage.js, NotebookPage.js) into a highly optimized, production-ready Android application. The target is a professional, blazing-fast, battery-efficient productivity suite named "MintOrbit: DayStream Velocity". 
+
+Ensure the resulting code complies with Modern Android standards (SDK 34+), utilizes local caching structures, eliminates UI performance bottlenecks, and introduces robust background alarming and notification layers.
+
+## 1. Architectural & Performance Foundations
+
+### A. State Management & Heavy Computations
+* **Problem:** The current calendar rendering uses un-memoized nested maps inside SectionList rows, and routine structures copy state aggressively on mutation.
+* **Refactor Requirement:**
+    * Extract heavy calendar processing (generating days, padding empty cells per month) into a customized `useMemo` block that only recalculates if the `currentYear` state updates.
+    * Enforce strict `React.memo` components for `CalendarCell` and individual `RoutineItem` components. Ensure their props pass strict primitive comparisons or utilize custom `areEqual` functions to prevent deep-hierarchy re-renders.
+    * Batch state updates on heavy write channels.
+
+### B. High-Speed Local Storage
+* **Problem:** JSON stringification and parsing across large arrays over `AsyncStorage` block the JS thread during intensive input cycles.
+* **Refactor Requirement:** * Swap `AsyncStorage` out for `@react-native-async-storage/async-storage` combined with an abstract repository wrapper, or provide the complete setup for a ultra-fast key-value store like `react-native-mmkv` if structural schema validation is supported.
+    * Create clean helper methods: `saveRoutine(day, routineData)`, `fetchRoutines()`, `saveEvent(dateString, eventArray)`.
+
+## 2. Notification Engine & Exact Alarms (Android Focus)
+
+Integrate `expo-notifications` alongside a secondary native scheduler strategy to ensure reliability on Android devices despite aggressive OS battery optimization.
+
+### A. Core Architecture Requirements
+* **Exact Alarms:** Use `expo-notifications` to schedule scoped routine notifications. Implement fallback logic or checks using `expo-modules-core` or notification permissions to verify if `SCHEDULE_EXACT_ALARM` is active on Android 13+.
+* **Persistent Notification Anchor:** When a routine task is running or approaching within a 1-hour window, push a silent, low-priority, ongoing notification bar update acting as a quick-glance status bar widget.
+
+### B. Functional Integration (RoutinePage.js)
+* **Trigger Hook:** Whenever a user creates or modifies a routine task in `addTask()`, execute a side-effect function: `scheduleRoutineNotification(taskId, taskName, timeString, activeDay)`.
+* **Time Calculation:** Programmatically calculate the next calendar instance of `activeDay` at `timeString` (e.g., Next Thursday at 14:30) and map this to an exact millisecond timestamp or daily repeating rule.
+* **Cleanup Phase:** On `deleteTask()`, ensure the notification is canceled via its unique string ID identifier using `Notifications.cancelScheduledNotificationAsync(id)`.
+
+---
+
+## 3. Professional UI/UX Refactoring
+
+Ditch the harsh "Brutal Neo-brutalism" formatting for an elegant, fluid, modern dark interface that optimizes for High-Refresh-Rate (90Hz/120Hz) Android displays.
+
+
+[System Status Bar: Matches App Theme Seamlessly]
+
+
+|  MintOrbit | DayStream Velocity  [Settings]   | <-- Elegant, Minimal Header
+|***|
+| [ SUN ] [ MON ] [ *TUE* ] [ WED ] [ THU ] ... | <-- Active Day Horizontal Track
+|***|
+|                                               |
+|  + Add New Activity                           | <-- Smooth expandable action-sheet
+
+|  |
+| --- |
+| Morning Standup Sync         (🗑️) |
+| Core Engine Architecture Build(🗑️) |
+| _______________________________________________ |
+
+```
+
+* **Color Profile:** Apply a modern AMOLED Dark palette:
+    * Background: `#0D0E12` (True pitch dark variant)
+    * Surface Cards/Elements: `#16171D`
+    * Brand Primary accent: `#00E676` (Neon Mint)
+    * Alert/Destructive accent: `#FF5252`
+* **Animations:** Wrap item deletions and list insertions in LayoutAnimation configurations (`LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)`) for fluid micro-interactions.
+* **Typography & Form Factor:** Ensure all hit targets (`TouchableOpacity`) have a minimum vertical footprint of **48dp** to adhere to Google Play accessibility requirements. Replace default Android spinner time-pickers with a seamless native clock dialog mode panel view.
+
+---
+
+## 4. Production Engineering & Build Optimization
+
+Update configurations to allow seamless compilation via Expo Application Services (EAS) CLI, passing standard Proguard and bundle-shrinking pipelines.
+
+### A. Android Build Configuration (`app.json`)
+Ensure the setup explicitly defines and manages native compilation rules:
+```json
+"android": {
+  "package": "com.spaincity.myroutine",
+  "versionCode": 1,
+  "permissions": [
+    "NOTIFICATIONS",
+    "SCHEDULE_EXACT_ALARM",
+    "VIBRATE"
+  ],
+  "buildProperties": {
+    "shrinkResourcesAndroid": true,
+    "useProguard": true
+  }
+}
+
+```
+
+### B. Fault Isolation & Diagnostic Strategy
+
+* Incorporate a top-level React Error Boundary utility wrapper component inside `App.js` to catch component-tree exceptions gracefully and prevent app crashes.
+* Implement explicit try/catch blocks on all I/O, storage accessors, and notification scheduling processes, complete with explicit fallback UI notices or safe structural recoveries.
+
+---
+
+## Deliverables Expected:
+
+1. **Complete, clean source code files** for `App.js`, `RoutinePage.js`, `CalendarPage.js`, and `NotebookPage.js` matching these precise requirements.
+2. **No shortcuts, placeholders, or `// TODO` blocks** on the implementation pipelines for storage, state mapping, and notification routing.
+3. **Modern structural ES6 syntax**, semantic naming schemes, and modular layouts that ensure straightforward debugging and code validation.
