@@ -17,14 +17,16 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.spaincity.myroutine",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
       "package": "com.spaincity.myroutine",
       "versionCode": 21,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0D0E12"
       },
       "permissions": [
@@ -62,11 +64,19 @@
             "minSdkVersion": 24,
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
-            "extraProguardRules": "-keep class com.facebook.react.** { *; }"
+            "extraProguardRules": "-keep class com.facebook.react.** { *; }",
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ],
-      "expo-document-picker"
-    ]
+      "expo-document-picker",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b2611b68-be93-49a8-9ab2-8d0f43bcc5b0"
+      }
+    },
+    "owner": "jackmalik"
   }
 }

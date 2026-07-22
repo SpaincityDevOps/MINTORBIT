@@ -14,10 +14,6 @@ legacy/node_modules/
 *.key
 *.mobileprovision
 *.orig.*
-*.apk
-*.aab
-!builds/*.apk
-!builds/*.aab
 
 # Metro
 .metro-health-check*
